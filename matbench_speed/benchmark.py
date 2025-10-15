@@ -1,3 +1,4 @@
+from pathlib import Path
 import ase
 from ase.build import bulk
 import time
@@ -36,6 +37,47 @@ def benchmark_size(size, calc):
         times.append(time.time() - start)
     return np.median(times), np.std(times), num_atoms
 
+def torch_profile_size(model, size, calc):
+    import torch
+    from torch.profiler import (
+    profile,
+    ProfilerActivity,
+    schedule,
+    record_function,
+    ) 
+
+    atoms = ase.build.bulk("C", "diamond", a=3.567, cubic=True)
+    atoms = atoms.repeat((size, size, size))
+    num_atoms = len(atoms)
+    atoms.calc = calc
+    # warmup
+    for _ in range(10):
+        E = atoms.get_potential_energy()
+        atoms.rattle()
+    gpu_name = get_gpu_name()
+    profile_output_path = Path(f"./profiles/{gpu_name}/{model}/{num_atoms}")
+    profile_output_path.mkdir(parents=True, exist_ok=True)
+
+    prof_sched = schedule(wait=2, warmup=3, active=5, repeat=1)  # short & light
+    total_steps = 2 + 3 + 5
+
+    with profile(
+        activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+        schedule=prof_sched,
+        record_shapes=True,
+        profile_memory=True,
+        with_stack=True,
+    ) as prof:
+        for _ in range(total_steps):
+            with record_function("model.get_potential_energy"):
+                _ = atoms.get_potential_energy()
+            atoms.rattle()
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            prof.step()
+        
+        prof.export_chrome_trace(str(profile_output_path / "trace"))
+
 
 def get_gpu_name():
     if 'torch' in sys.modules:
@@ -60,3 +102,6 @@ def benchmark(calculators):
                 continue
             print(model, ": ", "atoms: ", num_atoms, "time: ", time_ms, " +/- ", time_std_ms, " ms")
             write_to_csv(model, num_atoms, time_ms, time_std_ms, gpu_name)
+
+            if 'torch' in sys.modules:
+                torch_profile_size(model, size, calculator)
