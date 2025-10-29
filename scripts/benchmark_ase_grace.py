@@ -5,7 +5,11 @@
 #     "ase",
 #     "jax[cuda12]",
 #     "tensorpotential",
+#     "matbench_speed",
 # ]
+#
+# [tool.uv.sources]
+# matbench_speed = { path = "../." }
 # ///
 
 from matbench_speed.benchmark import benchmark

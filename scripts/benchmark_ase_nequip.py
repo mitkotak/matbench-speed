@@ -5,10 +5,12 @@
 #     "nequip",
 #     "torch==2.9.0",
 #     "openequivariance==0.4.1",
+#     "matbench_speed",
 # ]
 #
 # [tool.uv.sources]
 # torch = { url = "https://download.pytorch.org/whl/test/cu128" }
+# matbench_speed = { path = "../." }
 # ///
 
 from matbench_speed.benchmark import benchmark

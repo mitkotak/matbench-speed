@@ -3,8 +3,11 @@
 # dependencies = [
 #     "ase",
 #     "nequix[torch]",
+#     "matbench_speed",
 # ]
 #
+# [tool.uv.sources]
+# matbench_speed = { path = "../." }
 # ///
 
 from matbench_speed.benchmark import benchmark
@@ -12,11 +15,11 @@ from nequix.calculator import NequixCalculator
 
 calculators = {
     "Nequix-MP-1": NequixCalculator(
-        model_path="./models/nequix-mp-1.nqx",
+        model_name="nequix-mp-1",
         backend="jax",
     ),
     "Nequix-MP-1.5": NequixCalculator(
-        model_path="./models/nequix-mp-1.pt",
+        model_name="nequix-mp-1",
         backend="torch",
     ),
 }

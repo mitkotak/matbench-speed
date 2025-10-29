@@ -1,8 +1,11 @@
 # /// script
 # dependencies = [
 #     "fairchem-core",
+#     "matbench_speed",
 # ]
 #
+# [tool.uv.sources]
+# matbench_speed = { path = "../." }
 # ///
 
 from matbench_speed.benchmark import benchmark

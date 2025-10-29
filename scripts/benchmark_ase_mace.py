@@ -7,8 +7,11 @@
 #     "torch==2.7.0",
 #     "cuequivariance-torch",
 #     "cuequivariance-ops-torch-cu12",
+#     "matbench_speed",
 # ]
 #
+# [tool.uv.sources]
+# matbench_speed = { path = "../." }
 # ///
 
 from matbench_speed.benchmark import benchmark

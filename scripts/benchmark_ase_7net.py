@@ -5,11 +5,13 @@
 #     "torch",
 #     "sevenn",
 #     "flashTP_e3nn",
+#     "matbench_speed",
 # ]
 #
 # [tool.uv.sources]
 # sevenn = { git = "https://github.com/MDIL-SNU/SevenNet.git", branch = "flash" }
 # flashTP_e3nn = { git = "https://github.com/SNU-ARC/flashTP", branch = "main" }
+# matbench_speed = { path = "../." }
 # ///
 
 from matbench_speed.benchmark import benchmark
