@@ -1,7 +1,7 @@
 # Matbench-Speed
 
 - SevenNet, GRACE, Nequix, MACE scripts should run out of box.]
-- For eSEN the checkpoint needs to be downloaded from [hugging face](https://huggingface.co/facebook/OMAT24). 
+- For eSEN the checkpoint needs to be downloaded from [hugging face](https://huggingface.co/facebook/OMAT24).
 - For NequIP the model needs ``torch==2.9.0``, ``openequivariance==0.4.1`` and needs to be compiled on the target hardware using the command
 
     ```bash
@@ -12,4 +12,3 @@
 # Benchmarks (Updated 10/26/2025)
 
 ![](./figures/inference_fig_A100.png)
-![](./figures/inference_fig_RTX5080.png)
