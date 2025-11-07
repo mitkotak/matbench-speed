@@ -19,7 +19,7 @@ from mace.calculators.foundations_models import mace_mp
 
 calculators = {
     "MACE-MP-0": mace_mp(
-        model="medium",
+        model="medium-0b3",
         default_dtype="float32",
         device="cuda",
         compile_mode=True,
