@@ -11,4 +11,4 @@
 
 # Benchmarks (Updated 10/26/2025)
 
-![](./figures/inference_fig_A100.png)
+![](./figures/inference_fig_NVIDIA%20A100-SXM4-80GB_float32.png)
