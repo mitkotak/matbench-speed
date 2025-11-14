@@ -18,13 +18,21 @@ from matbench_speed.benchmark import benchmark
 from mace.calculators.foundations_models import mace_mp
 
 calculators = {
-    "MACE-MP-0": mace_mp(
+    "MACE-MP-0-no-kernels": mace_mp(
         model="medium-0b3",
         default_dtype="float32",
         device="cuda",
-        compile_mode=True,
+        compile_mode="default",
         fullgraph=False,
-        enable_cueq=True,
+        enable_cueq=False,
     ),
+    "MACE-MP-0": mace_mp(
+        mode="medium-0b3",
+        default_dtype="float32",
+        device="cuda",
+        compile_mode="default",
+        fullgraph=False,
+        enable_cueq=False,
+    )
 }
 benchmark(calculators)
