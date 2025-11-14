@@ -2,7 +2,7 @@
 # requires-python = ">=3.10"
 # dependencies = [
 #     "ase",
-#     "nequix",
+#     "nequix[torch]",
 #     "matbench_speed",
 # ]
 #
@@ -14,9 +14,9 @@ from matbench_speed.benchmark import benchmark
 from nequix.calculator import NequixCalculator
 
 calculators = {
-    "Nequix-MP-1": NequixCalculator(
+    "Nequix-MP-1.5": NequixCalculator(
         model_name="nequix-mp-1",
-        backend="jax",
+        backend="torch",
     ),
 }
 benchmark(calculators)

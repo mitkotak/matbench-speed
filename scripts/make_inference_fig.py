@@ -40,6 +40,7 @@ def main() -> None:
     df = pd.read_csv("./data/timing_data_A100.csv")
     df = df[df["atoms"] < 5000]
     gpu_name = df["gpu"].unique()[0]
+    precision = df["precision"].unique()[0]
     df["steps_per_day_m"] = 86_400_000.0 / df["time"] / 1_000_000.0
     ours_old_x, ours_old_y_millions = _series(df, "Nequix-MP-1")
     ours_x, ours_y_millions = _series(df, "Nequix-MP-1.5")
@@ -73,11 +74,11 @@ def main() -> None:
     legend = ax.legend(fontsize=7, loc='best')
     legend.get_frame().set_linewidth(0.5)
     
-    ax.set_title(f"{gpu_name} Benchmark", fontsize=10, weight='normal')
+    ax.set_title(f"{gpu_name} {precision} Benchmark", fontsize=10, weight='normal')
 
     fig.tight_layout()
-    fig.savefig(f"./figures/inference_fig_{gpu_name}.pdf", dpi=300, bbox_inches="tight")
-    fig.savefig(f"./figures/inference_fig_{gpu_name}.png", dpi=300, bbox_inches="tight")
+    fig.savefig(f"./figures/inference_fig_{gpu_name}_{precision}.pdf", dpi=300, bbox_inches="tight")
+    fig.savefig(f"./figures/inference_fig_{gpu_name}_{precision}.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 
