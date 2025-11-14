@@ -52,7 +52,7 @@ def benchmark(calculators, precision="float32"):
     gpu_name = get_gpu_name()
 
     for model, calculator in calculators.items():
-        for i, size in enumerate([1,1,2,3,4,5,6,7]):
+        for i, size in enumerate([1,1,2,3,4,5,6,7,8,9]):
             time_s, time_std, num_atoms = benchmark_size(size, calculator)
             time_ms, time_std_ms = time_s * 1000, time_std * 1000
             if i == 0:
