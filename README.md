@@ -1,6 +1,7 @@
 # Matbench-Speed
 
-- SevenNet, GRACE, Nequix, MACE scripts should run out of box.]
+- SevenNet, GRACE, Nequix scripts out of the box.
+- For MACE without kernels you will need to do [this hack](https://github.com/ACEsuit/mace/issues/1208#issuecomment-3348723384) in your local installation (typically in your conda/venv path)
 - For eSEN the checkpoint needs to be downloaded from [hugging face](https://huggingface.co/facebook/OMAT24).
 - For NequIP the model needs ``torch==2.9.0``, ``openequivariance==0.4.1`` and needs to be compiled on the target hardware using the command
 
