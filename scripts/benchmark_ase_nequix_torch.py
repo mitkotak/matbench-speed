@@ -7,7 +7,6 @@
 # ]
 #
 # [tool.uv.sources]
-# nequix = {path = "../../nequix/.", editable = true}
 # matbench_speed = { path = "../." }
 # ///
 
