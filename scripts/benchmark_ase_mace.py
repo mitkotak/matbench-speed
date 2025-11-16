@@ -32,7 +32,7 @@ calculators = {
         device="cuda",
         compile_mode="default",
         fullgraph=False,
-        enable_cueq=False,
+        enable_cueq=True,
     )
 }
 benchmark(calculators)
