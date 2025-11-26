@@ -12,6 +12,10 @@
 
 # Benchmarks (Updated 10/26/2025)
 
+## A100 on Perlmutter
 ![](./figures/inference_fig_NVIDIA%20A100-SXM4-80GB_float32.png)
+
+## T4 on Google Colab
+![](./figures/inference_fig_Tesla%20T4_float32.png)
 
 For H100 numbers checkout Fig.5 in https://arxiv.org/abs/2510.11241
