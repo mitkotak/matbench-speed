@@ -12,7 +12,7 @@
 
 # Benchmarks (Updated 10/26/2025)
 
-## A100 on Perlmutter
+## A100
 ![](./figures/inference_fig_NVIDIA%20A100-SXM4-80GB_float32.png)
 
 ## T4 on Google Colab
