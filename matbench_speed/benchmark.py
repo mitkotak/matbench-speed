@@ -25,12 +25,14 @@ def benchmark_size(size, calc):
     # warmup
     for _ in range(10):
         E = atoms.get_potential_energy()
+        F = atoms.get_forces()
         atoms.rattle()
 
     times = []
     for _ in range(100):
         start = time.time()
         E = atoms.get_potential_energy()
+        F = atoms.get_forces()
         # print(E)
         atoms.rattle()
         times.append(time.time() - start)
