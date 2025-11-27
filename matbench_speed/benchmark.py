@@ -28,9 +28,10 @@ def benchmark_size(size, calc):
     t_warmup = 0
 
     while i_warmup < 20 and t_warmup < 2:
-            E = atoms.get_potential_energy()
-            F = atoms.get_forces()
-            atoms.rattle()
+        E = atoms.get_potential_energy()
+        F = atoms.get_forces()
+        S = atoms.get_stress()
+        atoms.rattle()
     
     i_timing = 0
     t_timing = 0
@@ -42,6 +43,7 @@ def benchmark_size(size, calc):
 
         E = atoms.get_potential_energy()
         F = atoms.get_forces()
+        S = atoms.get_stress()
         atoms.rattle()
 
         t_end = time.time()
