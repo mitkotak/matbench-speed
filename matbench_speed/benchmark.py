@@ -22,22 +22,34 @@ def benchmark_size(size, calc):
     num_atoms = len(atoms)
     print("Number of atoms: ", num_atoms)
     atoms.calc = calc
+    
     # warmup
-    for _ in range(10):
-        E = atoms.get_potential_energy()
-        F = atoms.get_forces()
-        atoms.rattle()
+    i_warmup = 0
+    t_warmup = 0
 
+    while i_warmup < 20 and t_warmup < 2:
+            E = atoms.get_potential_energy()
+            F = atoms.get_forces()
+            atoms.rattle()
+    
+    i_timing = 0
+    t_timing = 0
     times = []
-    for _ in range(100):
-        start = time.time()
+
+    while i_timing < 100 and t_timing  < 5:
+
+        t_start = time.time()
+
         E = atoms.get_potential_energy()
         F = atoms.get_forces()
-        # print(E)
         atoms.rattle()
-        times.append(time.time() - start)
-    return np.median(times), np.std(times), num_atoms
 
+        t_end = time.time()
+        t_timing += t_end - t_start
+        i_timing += 1
+        times.append(t_end - t_start)
+
+    return np.median(times), np.std(times), num_atoms
 
 def get_gpu_name():
     if 'torch' in sys.modules:
