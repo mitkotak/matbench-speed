@@ -22,17 +22,17 @@ def benchmark_size(size, calc):
     num_atoms = len(atoms)
     print("Number of atoms: ", num_atoms)
     atoms.calc = calc
-    
+
     # warmup
     i_warmup = 0
     t_warmup = 0
 
-    while i_warmup < 20 and t_warmup < 2:
+    while i_warmup < 20 and t_warmup < 1:
         E = atoms.get_potential_energy()
         F = atoms.get_forces()
         S = atoms.get_stress()
         atoms.rattle()
-    
+
     i_timing = 0
     t_timing = 0
     times = []
