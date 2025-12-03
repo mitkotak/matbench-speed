@@ -28,10 +28,18 @@ def benchmark_size(size, calc):
     t_warmup = 0
 
     while i_warmup < 20 and t_warmup < 1:
+
+        t_start = time.time()
+
         E = atoms.get_potential_energy()
         F = atoms.get_forces()
         S = atoms.get_stress()
         atoms.rattle()
+
+        t_end = time.time()
+        t_warmup += (t_end - t_start)
+        i_warmup += 1
+        
 
     i_timing = 0
     t_timing = 0
@@ -47,7 +55,7 @@ def benchmark_size(size, calc):
         atoms.rattle()
 
         t_end = time.time()
-        t_timing += t_end - t_start
+        t_timing += (t_end - t_start)
         i_timing += 1
         times.append(t_end - t_start)
 
@@ -69,6 +77,7 @@ def benchmark(calculators, precision="float32"):
 
     for model, calculator in calculators.items():
         for i, size in enumerate([1,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]):
+        # for i, size in enumerate([1,6,]):
             time_s, time_std, num_atoms = benchmark_size(size, calculator)
             time_ms, time_std_ms = time_s * 1000, time_std * 1000
             if i == 0:

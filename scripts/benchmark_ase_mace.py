@@ -4,7 +4,7 @@
 #     "pip-system-certs",
 #     "ase",
 #     "mace-torch",
-#     "torch==2.7.0",
+#     "torch==2.9.1",
 #     "cuequivariance-torch",
 #     "cuequivariance-ops-torch-cu12",
 #     "matbench_speed",
