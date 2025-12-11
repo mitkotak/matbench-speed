@@ -1,6 +1,7 @@
 # Matbench-Speed
 
-- SevenNet, GRACE, Nequix, MACE scripts should run out of box.]
+- SevenNet, GRACE, Nequix scripts out of the box.
+- For MACE without kernels you will need to do [this hack](https://github.com/ACEsuit/mace/issues/1208#issuecomment-3348723384) in your local installation (typically in your conda/venv path)
 - For eSEN the checkpoint needs to be downloaded from [hugging face](https://huggingface.co/facebook/OMAT24).
 - For NequIP the model needs ``torch==2.9.0``, ``openequivariance==0.4.1`` and needs to be compiled on the target hardware using the command
 
@@ -11,4 +12,10 @@
 
 # Benchmarks (Updated 10/26/2025)
 
+## A100
 ![](./figures/inference_fig_NVIDIA%20A100-SXM4-80GB_float32.png)
+
+## T4 on Google Colab
+![](./figures/inference_fig_Tesla%20T4_float32.png)
+
+For H100 numbers checkout Fig.5 in https://arxiv.org/abs/2510.11241

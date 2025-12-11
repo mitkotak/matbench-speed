@@ -4,7 +4,7 @@
 #     "pip-system-certs",
 #     "ase",
 #     "mace-torch",
-#     "torch==2.7.0",
+#     "torch==2.9.1",
 #     "cuequivariance-torch",
 #     "cuequivariance-ops-torch-cu12",
 #     "matbench_speed",
@@ -18,21 +18,21 @@ from matbench_speed.benchmark import benchmark
 from mace.calculators.foundations_models import mace_mp
 
 calculators = {
-    "MACE-MP-0-no-kernels": mace_mp(
-        model="medium-0b3",
-        default_dtype="float32",
-        device="cuda",
-        compile_mode="default",
-        fullgraph=False,
-        enable_cueq=False,
-    ),
+    #"MACE-MP-0-no-kernels": mace_mp(
+    #    model="medium-0b3",
+    #    default_dtype="float32",
+    #    device="cuda",
+    #    compile_mode="default",
+    #    fullgraph=False,
+    #    enable_cueq=False,
+    #),
     "MACE-MP-0": mace_mp(
         mode="medium-0b3",
         default_dtype="float32",
         device="cuda",
         compile_mode="default",
         fullgraph=False,
-        enable_cueq=False,
+        enable_cueq=True,
     )
 }
 benchmark(calculators)
