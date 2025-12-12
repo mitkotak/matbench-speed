@@ -3,6 +3,7 @@
 # dependencies = [
 #     "pip-system-certs",
 #     "ase",
+#     "numpy<2",
 #     "jax[cuda12]",
 #     "tensorpotential",
 #     "matbench_speed",

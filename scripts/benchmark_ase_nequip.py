@@ -3,7 +3,7 @@
 # dependencies = [
 #     "ase",
 #     "nequip",
-#     "torch==2.9.0",
+#     "torch==2.9.1",
 #     "openequivariance==0.4.1",
 #     "matbench_speed",
 # ]
@@ -26,11 +26,11 @@ if not os.path.isfile("./models/mir-group__NequIP-OAM-L__0.1.nequip.pt2"):
 calculators = {
     # The NequIP MPTrj and OAM models have the same hyperparams and since only the OAM
     # has kernels we use it.
-    #"NequIP-MP-L": NequIPCalculator.from_compiled_model(
-    #    compile_path="./models/mir-group__NequIP-OAM-L__0.1.nequip.pt2",
-    #    device="cuda",  # or "cpu"
-    #),
-    "NequIP-ML-XL": NequIPCalculator.from_compiled_model(
+    "NequIP-MP-L": NequIPCalculator.from_compiled_model(
+        compile_path="./models/mir-group__NequIP-OAM-L__0.1.nequip.pt2",
+        device="cuda",  # or "cpu"
+    ),
+    "NequIP-MP-XL": NequIPCalculator.from_compiled_model(
         compile_path="./models/mir-group__NequIP-OAM-XL__0.1.nequip.pt2",
         device="cuda",
     )
