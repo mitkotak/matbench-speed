@@ -17,7 +17,7 @@ def write_to_csv(model_name, atoms, time_ms, time_std, precision, gpu_name, csv_
         writer.writerow([model_name, atoms, time_ms, time_std, precision, gpu_name])
 
 def benchmark_size(size, calc):
-    atoms = ase.build.bulk("C", "diamond", a=3.567, cubic=True)
+    atoms = ase.build.bulk("Si", "diamond", a=5.43, cubic=True)
     atoms = atoms.repeat((size, size, size))
     num_atoms = len(atoms)
     print("Number of atoms: ", num_atoms)
