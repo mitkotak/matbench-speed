@@ -42,28 +42,32 @@ def make_inference_fig(path: str) -> None:
     precision = df["precision"].unique()[0]
     df["steps_per_day_m"] = 86_400_000.0 / df["time"] / 1_000_000.0
     ours_x, ours_y_millions = _series(df, "Nequix-MP-1.5")
+    nequix_x, nequix_y_millions = _series(df, "Nequix-MP-1")
     nequip_x, nequip_y_millions = _series(df, "NequIP-MP-L")
     sevennet_x, sevennet_y_millions = _series(df, "SevenNet-l3i5")
     esen_x, esen_y_millions = _series(df, "eSEN-30M-MP")
     esen_s_x, esen_s_y_millions = _series(df, "eSEN-6M-OC25")
     mace_x, mace_y_millions = _series(df, "MACE-MP-0")
-    nequip_xl_x, nequip_xl_y_millions = _series(df, "NequIP-MP-XL")
+    # nequip_xl_x, nequip_xl_y_millions = _series(df, "NequIP-MP-XL")
+    grace_x, grace_y_millions = _series(df, "GRACE-2L-MPtrj")
     fig, ax = plt.subplots(figsize=(4.0, 3.0))
 
-    ax.plot(ours_x, ours_y_millions, marker="s", linestyle="-", color="tab:blue", label=our_model, markeredgecolor='black')
-    ax.plot(esen_x, esen_y_millions, marker="s", linestyle="-", color="tab:orange", label="eSEN-30M-MP", markeredgecolor='black')
-    ax.plot(esen_s_x, esen_s_y_millions, marker="s", linestyle="-", color="tab:purple", label="eSEN-6M-OC25", markeredgecolor='black')
-    ax.plot(mace_x, mace_y_millions, marker="s", linestyle="-", color="tab:cyan", label="MACE-MP-0", markeredgecolor='black')
-    ax.plot(nequip_x, nequip_y_millions, marker="s", linestyle="-", color="tab:green", label="NequIP-MP-L", markeredgecolor='black')
-    ax.plot(nequip_xl_x, nequip_xl_y_millions, marker="s", linestyle="-", color="tab:pink", label="NequIP-MP-XL", markeredgecolor='black')
-    ax.plot(sevennet_x, sevennet_y_millions, marker="s", linestyle="-", color="tab:red", label="SevenNet-l3i5", markeredgecolor='black')
+    ax.plot(ours_x, ours_y_millions, marker="s", markersize=4, linestyle="-", color="tab:blue", label=our_model, markeredgecolor='black')
+    ax.plot(nequix_x, nequix_y_millions, marker="s", markersize=4, linestyle="-", color="tab:brown", label="Nequix-MP", markeredgecolor='black')
+    ax.plot(esen_x, esen_y_millions, marker="s", markersize=4, linestyle="-", color="tab:orange", label="eSEN-30M-MP", markeredgecolor='black')
+    # ax.plot(esen_s_x, esen_s_y_millions, marker="s", markersize=4, linestyle="-", color="tab:purple", label="eSEN-6M-OC25", markeredgecolor='black')
+    ax.plot(mace_x, mace_y_millions, marker="s", markersize=4, linestyle="-", color="tab:cyan", label="MACE-MP-0", markeredgecolor='black')
+    ax.plot(nequip_x, nequip_y_millions, marker="s", markersize=4, linestyle="-", color="tab:green", label="NequIP-MP-L", markeredgecolor='black')
+    # ax.plot(nequip_xl_x, nequip_xl_y_millions, marker="s", markersize=4, linestyle="-", color="tab:pink", label="NequIP-MP-XL", markeredgecolor='black')
+    ax.plot(sevennet_x, sevennet_y_millions, marker="s", markersize=4, linestyle="-", color="tab:red", label="SevenNet-l3i5", markeredgecolor='black')
+    ax.plot(grace_x, grace_y_millions, marker="s", markersize=4, linestyle="-", color="tab:gray", label="GRACE-2L-MPtrj", markeredgecolor='black')
 
     ax.set_xlabel("Number of atoms")
     ax.set_ylabel("Steps per day (millions)")
     ax.set_xscale("log")
     ax.set_yscale("log")
     
-    x_labels = sorted(set(esen_s_x))
+    x_labels = sorted(set(mace_x))
     ax.xaxis.set_major_locator(FixedLocator(x_labels))
     ax.xaxis.set_major_formatter(FixedFormatter([str(x) for x in x_labels]))
     ax.tick_params(axis="x", labelrotation=75, labelsize=6)
@@ -77,7 +81,7 @@ def make_inference_fig(path: str) -> None:
     legend = ax.legend(fontsize=5, loc='best')
     legend.get_frame().set_linewidth(0.5)
     
-    ax.set_title(f"Benchmark {gpu_name} {precision}", fontsize=10, weight='normal')
+    ax.set_title(f"Matbench compliant, C diamond a=3.567 Å \n {gpu_name} {precision}", fontsize=8, weight='normal')
 
     fig.tight_layout()
     fig.savefig(f"./figures/inference_fig_{gpu_name}_{precision}.pdf", dpi=300, bbox_inches="tight")
@@ -86,6 +90,7 @@ def make_inference_fig(path: str) -> None:
 
 def main():
     make_inference_fig("./data/timing_data_A100.csv")
+    make_inference_fig("./data/timing_data_H100.csv")
     make_inference_fig("./data/timing_data_colab.csv")
 
 if __name__ == "__main__":

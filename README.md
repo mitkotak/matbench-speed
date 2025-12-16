@@ -10,7 +10,8 @@
 ## A100
 ![](./figures/inference_fig_NVIDIA%20A100-SXM4-80GB_float32.png)
 
+## H100
+![](./figures/inference_fig_NVIDIA%20H100%2080GB%20HBM3_float32.png)
+
 ## T4 on Google Colab
 ![](./figures/inference_fig_Tesla%20T4_float32.png)
-
-For H100 numbers checkout Fig.5 in https://arxiv.org/abs/2510.11241
