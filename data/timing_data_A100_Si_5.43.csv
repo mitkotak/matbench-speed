@@ -1,4 +1,4 @@
-imodel,num_atoms,atom_name,lattice_constant,time,std,precision,gpu
+model,num_atoms,atom_name,lattice_constant,time,std,precision,gpu
 Nequix-MP-1.5,8,Si,5.43,11.328577995300293,0.26190959111428175,float32,NVIDIA A100-SXM4-80GB
 Nequix-MP-1.5,64,Si,5.43,8.730173110961914,0.16051214868755279,float32,NVIDIA A100-SXM4-80GB
 Nequix-MP-1.5,216,Si,5.43,31.567096710205078,0.39257962834288657,float32,NVIDIA A100-SXM4-80GB

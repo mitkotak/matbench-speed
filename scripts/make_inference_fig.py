@@ -31,12 +31,16 @@ max_atoms = 5000
 
 def _series(df: pd.DataFrame, model_name: str) -> tuple[list[int], list[float]]:
     sub = df[df["model"] == model_name].copy()
-    sub = sub[sub["atoms"] != 8]
-    sub = sub.sort_values("atoms")
-    return sub["atoms"].tolist(), sub["steps_per_day_m"].tolist()
+    sub = sub[sub["num_atoms"] != 8]
+    sub = sub.sort_values("num_atoms")
+    return sub["num_atoms"].tolist(), sub["steps_per_day_m"].tolist()
 
 
 def make_inference_fig(path: str) -> None:
+    
+    atom_name = path.split("_")[3]
+    lattice_constant = path.split("_")[4]
+
     df = pd.read_csv(path)
     gpu_name = df["gpu"].unique()[0]
     precision = df["precision"].unique()[0]
@@ -50,6 +54,7 @@ def make_inference_fig(path: str) -> None:
     mace_x, mace_y_millions = _series(df, "MACE-MP-0")
     # nequip_xl_x, nequip_xl_y_millions = _series(df, "NequIP-MP-XL")
     grace_x, grace_y_millions = _series(df, "GRACE-2L-MPtrj")
+    orb_x, orb_y_millions = _series(df, "Orb-v3-cons-inf-omat")
     fig, ax = plt.subplots(figsize=(4.0, 3.0))
 
     ax.plot(ours_x, ours_y_millions, marker="s", markersize=4, linestyle="-", color="tab:blue", label=our_model, markeredgecolor='black')
@@ -61,6 +66,7 @@ def make_inference_fig(path: str) -> None:
     # ax.plot(nequip_xl_x, nequip_xl_y_millions, marker="s", markersize=4, linestyle="-", color="tab:pink", label="NequIP-MP-XL", markeredgecolor='black')
     ax.plot(sevennet_x, sevennet_y_millions, marker="s", markersize=4, linestyle="-", color="tab:red", label="SevenNet-l3i5", markeredgecolor='black')
     ax.plot(grace_x, grace_y_millions, marker="s", markersize=4, linestyle="-", color="tab:gray", label="GRACE-2L-MPtrj", markeredgecolor='black')
+    # ax.plot(orb_x, orb_y_millions, marker="s", markersize=4, linestyle="-", color="tab:purple", label="Orb-v3-cons-inf-omat", markeredgecolor='black')
 
     ax.set_xlabel("Number of atoms")
     ax.set_ylabel("Steps per day (millions)")
@@ -81,17 +87,21 @@ def make_inference_fig(path: str) -> None:
     legend = ax.legend(fontsize=5, loc='best')
     legend.get_frame().set_linewidth(0.5)
     
-    ax.set_title(f"Matbench compliant, C diamond a=3.567 Å \n {gpu_name} {precision}", fontsize=8, weight='normal')
-
+    ax.set_title(f"Matbench compliant, {atom_name} diamond lattice_constant={lattice_constant} Å \n {gpu_name} {precision}", fontsize=8, weight='normal')
+    # ax.set_title(f"Matbench non-compliant, {atom_name} diamond lattice_constant={lattice_constant} Å", fontsize=8, weight='normal')
+    
     fig.tight_layout()
-    fig.savefig(f"./figures/inference_fig_{gpu_name}_{precision}.pdf", dpi=300, bbox_inches="tight")
-    fig.savefig(f"./figures/inference_fig_{gpu_name}_{precision}.png", dpi=300, bbox_inches="tight")
+    fig.savefig(f"./figures/inference_fig_non_compliant_{gpu_name}_{precision}.pdf", dpi=300, bbox_inches="tight")
+    fig.savefig(f"./figures/inference_fig_non_compliant_{gpu_name}_{precision}.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 def main():
-    make_inference_fig("./data/timing_data_A100.csv")
-    make_inference_fig("./data/timing_data_H100.csv")
-    make_inference_fig("./data/timing_data_colab.csv")
+    atom_name = "Si"
+    lattice_constant = 5.43
+    
+    make_inference_fig(f"./data/timing_data_A100_{atom_name}_{lattice_constant}.csv")
+    make_inference_fig(f"./data/timing_data_H100_{atom_name}_{lattice_constant}.csv")
+    # make_inference_fig("./data/timing_data_T4_Si_5.67.csv")
 
 if __name__ == "__main__":
     main()
