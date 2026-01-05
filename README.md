@@ -5,13 +5,20 @@
 - For eSEN the checkpoint needs to be downloaded from [hugging face](https://huggingface.co/facebook/OMAT24).
 - For NequIP we are using the OMat24 model instead of MPTrj since it contains the kernels, and we confirmed that the hyperparams are the same for L model. XL model changes the lmax for intermediate irreps from lmax 3 to 4.
 
-# Benchmarks (Updated 10/26/2025)
+# Benchmarks (Updated 01/05/2026)
 
-## A100
-![](./figures/inference_fig_NVIDIA%20A100-SXM4-80GB_float32.png)
+## Matbench compliant
 
-## H100
-![](./figures/inference_fig_NVIDIA%20H100%2080GB%20HBM3_float32.png)
+### A100
+![](./figures/inference_fig_compliant_Si_5.43_NVIDIA%20A100-SXM4-80GB_float32.png)
 
-## T4 on Google Colab
-![](./figures/inference_fig_Tesla%20T4_float32.png)
+###  H100
+![](./figures/inference_fig_compliant_Si_5.43_NVIDIA%20H100%2080GB%20HBM3_float32.png)
+
+## Matbench non-compliant
+
+### A100
+![](./figures/inference_fig_non-compliant_Si_5.43_NVIDIA%20A100-SXM4-80GB_float32.png)
+
+### H100
+![](./figures/inference_fig_non-compliant_Si_5.43_NVIDIA%20H100%2080GB%20HBM3_float32.png)
