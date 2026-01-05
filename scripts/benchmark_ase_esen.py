@@ -22,4 +22,4 @@ calculators = {
         model_name="eSEN-30M-MP",
     ),
 }
-benchmark(calculators)
+benchmark(calculators, atom_name="Si", lattice_constant=5.43)

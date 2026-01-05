@@ -15,4 +15,4 @@ calculators = {
     "eSEN-6M-OC25": FAIRChemCalculator(
         pretrained_mlip.load_predict_unit("./models/esen_sm_conserve.pt", device="cuda"), task_name="oc25")
 }
-benchmark(calculators)
+benchmark(calculators, atom_name="Si", lattice_constant=5.43)

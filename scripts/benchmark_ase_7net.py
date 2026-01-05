@@ -22,4 +22,4 @@ import torch
 calculators = {
     "SevenNet-l3i5": SevenNetCalculator("7net-l3i5", enable_flash=True),
 }
-benchmark(calculators)
+benchmark(calculators, atom_name="Si", lattice_constant=5.43)
