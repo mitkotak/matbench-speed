@@ -30,9 +30,9 @@ calculators = {
         compile_path="./models/mir-group__NequIP-OAM-L__0.1.nequip.pt2",
         device="cuda",  # or "cpu"
     ),
-    "NequIP-MP-XL": NequIPCalculator.from_compiled_model(
-        compile_path="./models/mir-group__NequIP-OAM-XL__0.1.nequip.pt2",
-        device="cuda",
-    )
+    #"NequIP-MP-XL": NequIPCalculator.from_compiled_model(
+    #    compile_path="./models/mir-group__NequIP-OAM-XL__0.1.nequip.pt2",
+    #    device="cuda",
+    #)
 }
 benchmark(calculators)
