@@ -1,5 +1,7 @@
 # Matbench-Speed
 
+Benchmarking MLIPs using their ASECalculator
+
 - SevenNet, GRACE, Nequix scripts out of the box.
 - For MACE without kernels you might need to do [this hack](https://github.com/ACEsuit/mace/issues/1208#issuecomment-3348723384) in your local installation (typically in your conda/venv path)
 - For eSEN the checkpoint needs to be downloaded from [hugging face](https://huggingface.co/facebook/OMAT24).
