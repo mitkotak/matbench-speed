@@ -31,7 +31,7 @@ matplotlib.rcParams['legend.fontsize'] = 8
 our_model = "Nequix-MP-1.5"
 atom_name = "Si"
 lattice_constant = 5.43
-compliant_status = "compliant"
+compliant_status = "non-compliant"
 
 def _series(df: pd.DataFrame, model_name: str) -> tuple[list[int], list[float]]:
     sub = df[df["model"] == model_name].copy()
