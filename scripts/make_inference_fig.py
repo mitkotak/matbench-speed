@@ -58,6 +58,7 @@ def make_inference_fig(path: str) -> None:
     grace_x, grace_y_millions = _series(df, "GRACE-2L-MPtrj")
     
     if not compliant_status == "compliant":
+        pet_xl_x, pet_xl_y_millions = _series(df, "PET-OAM-XL")
         pet_s_x, pet_s_y_millions = _series(df, "PET-MAD-S")
         nequip_xl_x, nequip_xl_y_millions = _series(df, "NequIP-MP-XL")
         orb_x, orb_y_millions = _series(df, "Orb-v3-cons-inf-omat")
@@ -76,6 +77,8 @@ def make_inference_fig(path: str) -> None:
     if compliant_status == "non-compliant":
         ax.plot(pet_s_x, pet_s_y_millions, marker="s", markersize=4,
                 linestyle="-", color="coral", label="PET-MAD-S", markeredgecolor="black")
+        ax.plot(pet_s_x, pet_s_y_millions, marker="s", markersize=4,
+                linestyle="-", color="steelblue", label="PET-OAM-XL", markeredgecolor="black")
         ax.plot(nequip_xl_x, nequip_xl_y_millions, marker="s", markersize=4, linestyle="-", color="pink", label="NequIP-MP-XL", markeredgecolor='black')
         ax.plot(esen_s_x, esen_s_y_millions, marker="s", markersize=4, linestyle="-", color="purple", label="eSEN-6M-OC25", markeredgecolor='black')
         ax.plot(orb_x, orb_y_millions, marker="s", markersize=4, linestyle="-", color="gold", label="Orb-v3-cons-inf-omat", markeredgecolor='black')
