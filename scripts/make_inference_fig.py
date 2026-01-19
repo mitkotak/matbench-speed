@@ -19,13 +19,13 @@ matplotlib.rcParams['ytick.major.width'] = 0.8
 matplotlib.rcParams['xtick.major.size'] = 3.5
 matplotlib.rcParams['ytick.major.size'] = 3.5
 matplotlib.rcParams['lines.linewidth'] = 1.5
-matplotlib.rcParams['lines.markersize'] = 5
+matplotlib.rcParams['lines.markersize'] = 2
 matplotlib.rcParams['legend.frameon'] = True
 matplotlib.rcParams['legend.framealpha'] = 1.0
 matplotlib.rcParams['legend.edgecolor'] = 'black'
 matplotlib.rcParams['legend.fancybox'] = False
 matplotlib.rcParams['legend.fontsize'] = 8
-
+markersize = 2
 
 
 our_model = "Nequix-MP-1.5"
@@ -66,22 +66,22 @@ def make_inference_fig(path: str) -> None:
 
     fig, ax = plt.subplots(figsize=(4.0, 3.0))
 
-    ax.plot(ours_x, ours_y_millions, marker="s", markersize=4, linestyle="-", color="blue", label=our_model, markeredgecolor='black')
-    ax.plot(nequix_x, nequix_y_millions, marker="s", markersize=4, linestyle="-", color="brown", label="Nequix-MP-1", markeredgecolor='black')
-    ax.plot(esen_x, esen_y_millions, marker="s", markersize=4, linestyle="-", color="orange", label="eSEN-30M-MP", markeredgecolor='black')
-    ax.plot(mace_x, mace_y_millions, marker="s", markersize=4, linestyle="-", color="fuchsia", label="MACE-MP-0", markeredgecolor='black')
-    ax.plot(nequip_x, nequip_y_millions, marker="s", markersize=4, linestyle="-", color="green", label="NequIP-MP-L", markeredgecolor='black')
-    ax.plot(sevennet_x, sevennet_y_millions, marker="s", markersize=4, linestyle="-", color="red", label="SevenNet-l3i5", markeredgecolor='black')
-    ax.plot(grace_x, grace_y_millions, marker="s", markersize=4, linestyle="-", color="gray", label="GRACE-2L-MPtrj", markeredgecolor='black')
+    ax.plot(ours_x, ours_y_millions, marker="s", markersize=markersize, linestyle="-", color="blue", label=our_model, markeredgecolor='black')
+    ax.plot(nequix_x, nequix_y_millions, marker="s", markersize=markersize, linestyle="-", color="brown", label="Nequix-MP-1", markeredgecolor='black')
+    ax.plot(esen_x, esen_y_millions, marker="s", markersize=markersize, linestyle="-", color="orange", label="eSEN-30M-MP", markeredgecolor='black')
+    ax.plot(mace_x, mace_y_millions, marker="s", markersize=markersize, linestyle="-", color="fuchsia", label="MACE-MP-0", markeredgecolor='black')
+    ax.plot(nequip_x, nequip_y_millions, marker="s", markersize=markersize, linestyle="-", color="green", label="NequIP-MP-L", markeredgecolor='black')
+    ax.plot(sevennet_x, sevennet_y_millions, marker="s", markersize=markersize, linestyle="-", color="red", label="SevenNet-l3i5", markeredgecolor='black')
+    ax.plot(grace_x, grace_y_millions, marker="s", markersize=markersize, linestyle="-", color="gray", label="GRACE-2L-MPtrj", markeredgecolor='black')
     
     if compliant_status == "non-compliant":
-        ax.plot(pet_s_x, pet_s_y_millions, marker="s", markersize=4,
+        ax.plot(pet_s_x, pet_s_y_millions, marker="s", markersize=markersize,
                 linestyle="-", color="coral", label="PET-MAD-S", markeredgecolor="black")
-        ax.plot(pet_xl_x, pet_xl_y_millions, marker="s", markersize=4,
+        ax.plot(pet_xl_x, pet_xl_y_millions, marker="s", markersize=markersize,
                 linestyle="-", color="steelblue", label="PET-OAM-XL", markeredgecolor="black")
-        ax.plot(nequip_xl_x, nequip_xl_y_millions, marker="s", markersize=4, linestyle="-", color="pink", label="NequIP-MP-XL", markeredgecolor='black')
-        ax.plot(esen_s_x, esen_s_y_millions, marker="s", markersize=4, linestyle="-", color="purple", label="eSEN-6M-OC25", markeredgecolor='black')
-        ax.plot(orb_x, orb_y_millions, marker="s", markersize=4, linestyle="-", color="gold", label="Orb-v3-cons-inf-omat", markeredgecolor='black')
+        ax.plot(nequip_xl_x, nequip_xl_y_millions, marker="s", markersize=markersize, linestyle="-", color="pink", label="NequIP-MP-XL", markeredgecolor='black')
+        ax.plot(esen_s_x, esen_s_y_millions, marker="s", markersize=markersize, linestyle="-", color="purple", label="eSEN-6M-OC25", markeredgecolor='black')
+        ax.plot(orb_x, orb_y_millions, marker="s", markersize=markersize, linestyle="-", color="gold", label="Orb-v3-cons-inf-omat", markeredgecolor='black')
 
     ax.set_xlabel("Number of atoms")
     ax.set_ylabel("Steps per day (millions)")
