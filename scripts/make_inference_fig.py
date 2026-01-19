@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FixedLocator, FixedFormatter
 import matplotlib
 
+
+markersize = 3
 matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['font.sans-serif'] = ['Arial', 'Helvetica', 'DejaVu Sans']
 matplotlib.rcParams['font.size'] = 9
@@ -19,19 +21,18 @@ matplotlib.rcParams['ytick.major.width'] = 0.8
 matplotlib.rcParams['xtick.major.size'] = 3.5
 matplotlib.rcParams['ytick.major.size'] = 3.5
 matplotlib.rcParams['lines.linewidth'] = 1.5
-matplotlib.rcParams['lines.markersize'] = 2
+matplotlib.rcParams['lines.markersize'] = markersize
 matplotlib.rcParams['legend.frameon'] = True
 matplotlib.rcParams['legend.framealpha'] = 1.0
 matplotlib.rcParams['legend.edgecolor'] = 'black'
 matplotlib.rcParams['legend.fancybox'] = False
 matplotlib.rcParams['legend.fontsize'] = 8
-markersize = 2
 
 
 our_model = "Nequix-MP-1.5"
 atom_name = "Si"
 lattice_constant = 5.43
-compliant_status = "non-compliant"
+compliant_status = "compliant"
 
 def _series(df: pd.DataFrame, model_name: str) -> tuple[list[int], list[float]]:
     sub = df[df["model"] == model_name].copy()
