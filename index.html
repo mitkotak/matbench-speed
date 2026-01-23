@@ -94,7 +94,7 @@
         <canvas id="chart"></canvas>
     </div>
     <p class="hint" style="font-size:11px;margin-top:8px;">Scroll to zoom, drag to pan, or drag-select an area to zoom in</p>
-    <p class="disclaimer" style="font-size:11px;margin-top:24px;">This leaderboard is only meant to track the relative scaling of different MLIPs and does not do real MD runs during benchmarking. For more details refer to <a href="https://github.com/mitkotak/matbench-speed">github.com/mitkotak/matbench-speed</a></p>
+    <p class="disclaimer" style="font-size:13px;margin-top:24px;">Disclaimer: This leaderboard is only meant to track the relative scaling of different MLIPs and does not do real MD runs during benchmarking. For more details refer to <a href="https://github.com/mitkotak/matbench-speed">github.com/mitkotak/matbench-speed</a></p>
 
     <script>
     // File naming: timing_data_{GPU}_{element}_{lattice}.csv
@@ -333,6 +333,7 @@
                 data: modelData.map(d => ({ x: d.num_atoms, y: getYValue(d.time, yAxisType) })),
                 borderColor: MODEL_COLORS[model] || '#999',
                 backgroundColor: MODEL_COLORS[model] || '#999',
+                borderWidth: 2,
                 pointStyle: 'rect',
                 pointRadius: 4,
                 pointBorderColor: colors.pointBorder,
@@ -359,15 +360,11 @@
                     if (elements.length > 0) {
                         const hoveredIndex = elements[0].datasetIndex;
                         chart.data.datasets.forEach((dataset, i) => {
-                            dataset.borderWidth = i === hoveredIndex ? 3 : 1;
-                            dataset.borderColor = i === hoveredIndex
-                                ? MODEL_COLORS[dataset.label] || '#999'
-                                : (MODEL_COLORS[dataset.label] || '#999') + '40';
+                            dataset.borderWidth = i === hoveredIndex ? 4 : 2;
                         });
                     } else {
                         chart.data.datasets.forEach((dataset) => {
-                            dataset.borderWidth = 1;
-                            dataset.borderColor = MODEL_COLORS[dataset.label] || '#999';
+                            dataset.borderWidth = 2;
                         });
                     }
                     chart.update('none');
@@ -440,18 +437,14 @@
                         onHover: (e, legendItem, legend) => {
                             const ci = legend.chart;
                             ci.data.datasets.forEach((dataset, i) => {
-                                dataset.borderWidth = i === legendItem.datasetIndex ? 3 : 1;
-                                dataset.borderColor = i === legendItem.datasetIndex
-                                    ? MODEL_COLORS[dataset.label] || '#999'
-                                    : (MODEL_COLORS[dataset.label] || '#999') + '40';
+                                dataset.borderWidth = i === legendItem.datasetIndex ? 4 : 2;
                             });
                             ci.update('none');
                         },
                         onLeave: (e, legendItem, legend) => {
                             const ci = legend.chart;
                             ci.data.datasets.forEach((dataset) => {
-                                dataset.borderWidth = 1;
-                                dataset.borderColor = MODEL_COLORS[dataset.label] || '#999';
+                                dataset.borderWidth = 2;
                             });
                             ci.update('none');
                         }
