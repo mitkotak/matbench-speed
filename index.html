@@ -8,19 +8,43 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; background: #1a1a2e; color: #eee; }
-        h1 { font-size: 1.4em; margin-bottom: 16px; color: #fff; }
-        .controls { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; transition: background 0.3s, color 0.3s; }
+        body.dark { background: #1a1a2e; color: #eee; }
+        body.light { background: #f5f5f5; color: #222; }
+        h1 { font-size: 1.4em; margin-bottom: 16px; }
+        body.dark h1 { color: #fff; }
+        body.light h1 { color: #000; }
+        .controls { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; align-items: flex-end; }
         .control { display: flex; flex-direction: column; gap: 4px; }
-        .control label { font-size: 12px; color: #aaa; }
-        .control select { padding: 6px 10px; font-size: 14px; border: 1px solid #444; border-radius: 4px; background: #2d2d44; color: #eee; }
-        button { padding: 6px 12px; font-size: 13px; border: 1px solid #444; border-radius: 4px; background: #2d2d44; color: #eee; cursor: pointer; }
-        button:hover { background: #3d3d54; }
-        .chart-container { position: relative; height: 500px; background: #16213e; border-radius: 8px; padding: 10px; }
+        .control label { font-size: 12px; }
+        body.dark .control label { color: #aaa; }
+        body.light .control label { color: #666; }
+        .control select { padding: 6px 10px; font-size: 14px; border-radius: 4px; }
+        body.dark .control select { border: 1px solid #444; background: #2d2d44; color: #eee; }
+        body.light .control select { border: 1px solid #ccc; background: #fff; color: #222; }
+        button { padding: 6px 12px; font-size: 13px; border-radius: 4px; cursor: pointer; }
+        body.dark button { border: 1px solid #444; background: #2d2d44; color: #eee; }
+        body.dark button:hover { background: #3d3d54; }
+        body.light button { border: 1px solid #ccc; background: #fff; color: #222; }
+        body.light button:hover { background: #e5e5e5; }
+        .chart-container { position: relative; height: 500px; border-radius: 8px; padding: 10px; transition: background 0.3s; }
+        body.dark .chart-container { background: #16213e; }
+        body.light .chart-container { background: #fff; border: 1px solid #ddd; }
         canvas { max-width: 100%; }
+        .theme-toggle { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+        .theme-toggle span { font-size: 12px; }
+        .switch { position: relative; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: 0.3s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: 0.3s; border-radius: 50%; }
+        input:checked + .slider { background-color: #888; }
+        input:checked + .slider:before { transform: translateX(20px); }
+        .hint { transition: color 0.3s; }
+        body.dark .hint { color: #888; }
+        body.light .hint { color: #666; }
     </style>
 </head>
-<body>
+<body class="dark">
     <h1>Matbench-Speed Benchmark Results</h1>
     <div class="controls">
         <div class="control">
@@ -48,11 +72,19 @@
             </select>
         </div>
         <button onclick="resetZoom()">Reset Zoom</button>
+        <div class="theme-toggle">
+            <span>Dark</span>
+            <label class="switch">
+                <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                <span class="slider"></span>
+            </label>
+            <span>Light</span>
+        </div>
     </div>
     <div class="chart-container">
         <canvas id="chart"></canvas>
     </div>
-    <p style="font-size:11px;color:#888;margin-top:8px;">Scroll to zoom, drag to pan, or drag-select an area to zoom in</p>
+    <p class="hint" style="font-size:11px;margin-top:8px;">Scroll to zoom, drag to pan, or drag-select an area to zoom in</p>
 
     <script>
     // File naming: timing_data_{GPU}_{element}_{lattice}.csv
@@ -79,19 +111,19 @@
     ];
 
     const MODEL_COLORS = {
-        'Nequix-MP-1.5': '#5c9eff',
-        'Nequix-MP-1': '#ff6b6b',
-        'eSEN-30M-MP': '#ffb347',
-        'MACE-MP-0': '#ff66ff',
-        'MACE-MP-0-kernel': '#ff66ff',
-        'NequIP-MP-L': '#66ff66',
-        'SevenNet-l3i5': '#ff4444',
-        'GRACE-2L-MPtrj': '#aaaaaa',
-        'PET-MAD-S': '#ff9966',
-        'PET-OAM-XL': '#66b3ff',
-        'NequIP-MP-XL': '#ffaacc',
-        'eSEN-6M-OC25': '#cc66ff',
-        'Orb-v3-cons-inf-omat': '#ffdd55'
+        'Nequix-MP-1.5': '#22bbff',
+        'Nequix-MP-1': '#3366ff',
+        'eSEN-30M-MP': '#ff9933',
+        'MACE-MP-0': '#dd44dd',
+        'MACE-MP-0-kernel': '#dd44dd',
+        'NequIP-MP-L': '#33cc33',
+        'SevenNet-l3i5': '#ee3333',
+        'GRACE-2L-MPtrj': '#888888',
+        'PET-MAD-S': '#ff6644',
+        'PET-OAM-XL': '#44aacc',
+        'NequIP-MP-XL': '#ee77aa',
+        'eSEN-6M-OC25': '#aa44dd',
+        'Orb-v3-cons-inf-omat': '#ddaa22'
     };
 
     let chart = null;
@@ -214,6 +246,28 @@
         if (chart) chart.resetZoom();
     }
 
+    function isDarkMode() {
+        return document.body.classList.contains('dark');
+    }
+
+    function getThemeColors() {
+        const dark = isDarkMode();
+        return {
+            text: dark ? '#eee' : '#222',
+            tick: dark ? '#ccc' : '#444',
+            grid: dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+            title: dark ? '#fff' : '#000',
+            legend: dark ? '#ccc' : '#444',
+            pointBorder: dark ? '#fff' : '#000'
+        };
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark');
+        document.body.classList.toggle('light');
+        updateChart();
+    }
+
     async function updateChart() {
         const gpu = document.getElementById('gpu').value;
         const compliance = document.getElementById('compliance').value;
@@ -240,6 +294,7 @@
                 .sort((a, b) => a.num_atoms - b.num_atoms);
             if (modelData.length === 0) return;
 
+            const colors = getThemeColors();
             datasets.push({
                 label: model,
                 data: modelData.map(d => ({ x: d.num_atoms, y: getNsPerDay(d.time, timestep) })),
@@ -247,7 +302,7 @@
                 backgroundColor: MODEL_COLORS[model] || '#999',
                 pointStyle: 'rect',
                 pointRadius: 4,
-                pointBorderColor: '#fff',
+                pointBorderColor: colors.pointBorder,
                 pointBorderWidth: 1,
                 tension: 0
             });
@@ -255,6 +310,7 @@
 
         if (chart) chart.destroy();
 
+        const themeColors = getThemeColors();
         chart = new Chart(document.getElementById('chart'), {
             type: 'line',
             data: { datasets },
@@ -264,28 +320,28 @@
                 scales: {
                     x: {
                         type: 'logarithmic',
-                        title: { display: true, text: 'Number of atoms', font: { weight: 'bold', size: 13 }, color: '#eee' },
+                        title: { display: true, text: 'Number of atoms', font: { weight: 'bold', size: 13 }, color: themeColors.text },
                         ticks: {
                             callback: (v) => formatNumberTick(v),
                             maxRotation: 0,
-                            color: '#ccc',
+                            color: themeColors.tick,
                             font: { weight: 'bold' },
                             autoSkip: false,
                             maxTicksLimit: 20
                         },
-                        grid: { color: 'rgba(255,255,255,0.1)' }
+                        grid: { color: themeColors.grid }
                     },
                     y: {
                         type: 'logarithmic',
-                        title: { display: true, text: 'ns/day', font: { weight: 'bold', size: 13 }, color: '#eee' },
+                        title: { display: true, text: 'ns/day', font: { weight: 'bold', size: 13 }, color: themeColors.text },
                         ticks: {
                             callback: (v) => formatNumberTick(v),
-                            color: '#ccc',
+                            color: themeColors.tick,
                             font: { weight: 'bold' },
                             autoSkip: false,
                             maxTicksLimit: 20
                         },
-                        grid: { color: 'rgba(255,255,255,0.1)' }
+                        grid: { color: themeColors.grid }
                     }
                 },
                 plugins: {
@@ -293,9 +349,9 @@
                         display: true,
                         text: `Matbench ${compliance}, ${element} (a=${lattice}) - ${gpu}`,
                         font: { size: 14 },
-                        color: '#fff'
+                        color: themeColors.title
                     },
-                    legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 12, color: '#ccc' } },
+                    legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 12, color: themeColors.legend } },
                     zoom: {
                         pan: { enabled: true, mode: 'xy' },
                         zoom: {
