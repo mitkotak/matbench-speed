@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matbench-Speed</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
+        h1 { font-size: 1.4em; margin-bottom: 16px; }
+        .controls { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+        .control { display: flex; flex-direction: column; gap: 4px; }
+        .control label { font-size: 12px; color: #666; }
+        .control select { padding: 6px 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 6px 12px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; background: #f5f5f5; cursor: pointer; }
+        button:hover { background: #e5e5e5; }
+        .chart-container { position: relative; height: 500px; }
+        canvas { max-width: 100%; }
+    </style>
+</head>
+<body>
+    <h1>Matbench-Speed Benchmark Results</h1>
+    <div class="controls">
+        <div class="control">
+            <label>GPU</label>
+            <select id="gpu"></select>
+        </div>
+        <div class="control">
+            <label>Compliance</label>
+            <select id="compliance">
+                <option value="compliant">Compliant</option>
+                <option value="non-compliant">Non-compliant</option>
+            </select>
+        </div>
+        <div class="control">
+            <label>System</label>
+            <select id="system"></select>
+        </div>
+        <div class="control">
+            <label>Time step</label>
+            <select id="timestep">
+                <option value="0.5">0.5 fs</option>
+                <option value="1" selected>1 fs</option>
+                <option value="2">2 fs</option>
+                <option value="4">4 fs</option>
+            </select>
+        </div>
+        <button onclick="resetZoom()">Reset Zoom</button>
+    </div>
+    <div class="chart-container">
+        <canvas id="chart"></canvas>
+    </div>
+    <p style="font-size:11px;color:#666;margin-top:8px;">Scroll to zoom, drag to pan, or drag-select an area to zoom in</p>
+
+    <script>
+    // File naming: timing_data_{GPU}_{element}_{lattice}.csv
+    // e.g., timing_data_H100_Si_5.43.csv -> GPU=H100, element=Si, lattice=5.43
+
+    // Auto-detect repo from GitHub Pages URL, or set manually for local dev
+    function getRepoInfo() {
+        const host = window.location.hostname;
+        if (host.endsWith('.github.io')) {
+            const owner = host.replace('.github.io', '');
+            const repo = window.location.pathname.split('/')[1] || 'matbench-speed';
+            return { owner, repo };
+        }
+        // Default for local testing
+        return { owner: 'mitkotak', repo: 'matbench-speed' };
+    }
+
+    const COMPLIANT_MODELS = [
+        'Nequix-MP-1.5', 'Nequix-MP-1', 'eSEN-30M-MP', 'MACE-MP-0', 'MACE-MP-0-kernel',
+        'NequIP-MP-L', 'SevenNet-l3i5', 'GRACE-2L-MPtrj'
+    ];
+    const NON_COMPLIANT_MODELS = [
+        'PET-OAM-XL', 'PET-MAD-S', 'NequIP-MP-XL', 'Orb-v3-cons-inf-omat', 'eSEN-6M-OC25'
+    ];
+
+    const MODEL_COLORS = {
+        'Nequix-MP-1.5': '#0000ff',
+        'Nequix-MP-1': '#a52a2a',
+        'eSEN-30M-MP': '#ffa500',
+        'MACE-MP-0': '#ff00ff',
+        'MACE-MP-0-kernel': '#ff00ff',
+        'NequIP-MP-L': '#008000',
+        'SevenNet-l3i5': '#ff0000',
+        'GRACE-2L-MPtrj': '#808080',
+        'PET-MAD-S': '#ff7f50',
+        'PET-OAM-XL': '#4682b4',
+        'NequIP-MP-XL': '#ffc0cb',
+        'eSEN-6M-OC25': '#800080',
+        'Orb-v3-cons-inf-omat': '#ffd700'
+    };
+
+    let chart = null;
+    let dataCache = {};
+    let availableFiles = []; // [{gpu, element, lattice, filename}]
+
+    function parseFilename(filename) {
+        // timing_data_{GPU}_{element}_{lattice}.csv
+        const match = filename.match(/^timing_data_([^_]+)_([^_]+)_([^_]+)\.csv$/);
+        if (!match) return null;
+        return { gpu: match[1], element: match[2], lattice: match[3], filename };
+    }
+
+    async function loadFileList() {
+        // Try local files.json first (for local dev), then GitHub API
+        try {
+            const localResponse = await fetch('data/files.json');
+            if (localResponse.ok) {
+                const files = await localResponse.json();
+                return files.map(parseFilename).filter(Boolean);
+            }
+        } catch (e) {}
+
+        // Fall back to GitHub API (works on GitHub Pages)
+        const { owner, repo } = getRepoInfo();
+        const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/data`;
+        try {
+            const response = await fetch(apiUrl);
+            const contents = await response.json();
+            const csvFiles = contents
+                .filter(f => f.name.startsWith('timing_data_') && f.name.endsWith('.csv'))
+                .map(f => f.name);
+            return csvFiles.map(parseFilename).filter(Boolean);
+        } catch (e) {
+            console.error('Failed to fetch file list:', e);
+            return [];
+        }
+    }
+
+    async function loadCSV(filename) {
+        if (dataCache[filename]) return dataCache[filename];
+        // Try relative path first (works on GitHub Pages), fall back to raw.githubusercontent.com
+        let response = await fetch(`data/${filename}`);
+        if (!response.ok) {
+            const { owner, repo } = getRepoInfo();
+            response = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/main/data/${filename}`);
+        }
+        const text = await response.text();
+        const lines = text.trim().split('\n');
+        const headers = lines[0].split(',');
+        const rows = lines.slice(1).map(line => {
+            const values = line.split(',');
+            const obj = {};
+            headers.forEach((h, i) => obj[h.trim()] = values[i]?.trim());
+            return obj;
+        });
+        // Normalize: handle both 'num_atoms' and 'atoms' columns
+        const normalized = rows.map(r => ({
+            model: r.model,
+            num_atoms: parseInt(r.num_atoms || r.atoms),
+            time: parseFloat(r.time)
+        })).filter(r => r.num_atoms > 8 && !isNaN(r.time) && r.time > 0);
+        dataCache[filename] = normalized;
+        return normalized;
+    }
+
+    function populateDropdowns() {
+        const gpuSelect = document.getElementById('gpu');
+        const systemSelect = document.getElementById('system');
+
+        const gpus = [...new Set(availableFiles.map(f => f.gpu))].sort();
+        const systems = [...new Set(availableFiles.map(f => `${f.element}_${f.lattice}`))].sort();
+
+        gpuSelect.innerHTML = gpus.map(g => `<option value="${g}">${g}</option>`).join('');
+        systemSelect.innerHTML = systems.map(s => {
+            const [el, lat] = s.split('_');
+            return `<option value="${s}">${el} (a=${lat})</option>`;
+        }).join('');
+    }
+
+    function superscript(n) {
+        const chars = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
+        return String(n).split('').map(c => chars[c] || c).join('');
+    }
+
+    function formatLogTick(v) {
+        const exp = Math.log10(v);
+        // Show 10^n for powers of 10
+        if (Number.isInteger(exp)) return `10${superscript(exp)}`;
+        // Show smaller labels for 2 and 5 multiples (e.g., 20, 50, 200, 500)
+        const mantissa = v / Math.pow(10, Math.floor(exp));
+        if (Math.abs(mantissa - 2) < 0.01 || Math.abs(mantissa - 5) < 0.01) {
+            return v >= 1000 ? `${v/1000}k` : v;
+        }
+        return '';
+    }
+
+    function formatNumberTick(v) {
+        const exp = Math.log10(v);
+        const mantissa = v / Math.pow(10, Math.floor(exp));
+        // Show 1, 2, 5 multiples
+        if (Math.abs(mantissa - 1) < 0.01 || Math.abs(mantissa - 2) < 0.01 || Math.abs(mantissa - 5) < 0.01) {
+            if (v >= 1000000) return `${v/1000000}M`;
+            if (v >= 1000) return `${v/1000}k`;
+            return v;
+        }
+        return '';
+    }
+
+    function getNsPerDay(time_ms, timestep_fs) {
+        // steps_per_day = 86400000 / time_ms
+        // ns_per_day = steps_per_day * timestep_fs * 1e-6 (fs to ns)
+        return (86400000 / time_ms) * timestep_fs * 1e-6;
+    }
+
+    function resetZoom() {
+        if (chart) chart.resetZoom();
+    }
+
+    async function updateChart() {
+        const gpu = document.getElementById('gpu').value;
+        const compliance = document.getElementById('compliance').value;
+        const system = document.getElementById('system').value;
+        const timestep = parseFloat(document.getElementById('timestep').value);
+        const [element, lattice] = system.split('_');
+
+        const file = availableFiles.find(f => f.gpu === gpu && f.element === element && f.lattice === lattice);
+        if (!file) {
+            if (chart) chart.destroy();
+            chart = null;
+            return;
+        }
+
+        const data = await loadCSV(file.filename);
+        const models = compliance === 'compliant'
+            ? COMPLIANT_MODELS
+            : [...COMPLIANT_MODELS, ...NON_COMPLIANT_MODELS];
+
+        const datasets = [];
+        models.forEach(model => {
+            const modelData = data
+                .filter(d => d.model === model)
+                .sort((a, b) => a.num_atoms - b.num_atoms);
+            if (modelData.length === 0) return;
+
+            datasets.push({
+                label: model,
+                data: modelData.map(d => ({ x: d.num_atoms, y: getNsPerDay(d.time, timestep) })),
+                borderColor: MODEL_COLORS[model] || '#999',
+                backgroundColor: MODEL_COLORS[model] || '#999',
+                pointStyle: 'rect',
+                pointRadius: 4,
+                pointBorderColor: '#000',
+                pointBorderWidth: 1,
+                tension: 0
+            });
+        });
+
+        if (chart) chart.destroy();
+
+        chart = new Chart(document.getElementById('chart'), {
+            type: 'line',
+            data: { datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'logarithmic',
+                        title: { display: true, text: 'Number of atoms', font: { weight: 'bold', size: 13 }, color: '#000' },
+                        ticks: {
+                            callback: (v) => formatNumberTick(v),
+                            maxRotation: 0,
+                            color: '#000',
+                            font: { weight: 'bold' },
+                            autoSkip: false,
+                            maxTicksLimit: 20
+                        },
+                        grid: { color: 'rgba(0,0,0,0.1)' }
+                    },
+                    y: {
+                        type: 'logarithmic',
+                        title: { display: true, text: 'ns/day', font: { weight: 'bold', size: 13 }, color: '#000' },
+                        ticks: {
+                            callback: (v) => formatNumberTick(v),
+                            color: '#000',
+                            font: { weight: 'bold' },
+                            autoSkip: false,
+                            maxTicksLimit: 20
+                        },
+                        grid: { color: 'rgba(0,0,0,0.1)' }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: `Matbench ${compliance}, ${element} (a=${lattice}) - ${gpu}`,
+                        font: { size: 14 }
+                    },
+                    legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 12 } },
+                    zoom: {
+                        pan: { enabled: true, mode: 'xy' },
+                        zoom: {
+                            wheel: { enabled: true, speed: 0.05 },
+                            pinch: { enabled: true },
+                            drag: { enabled: true, backgroundColor: 'rgba(0,0,255,0.1)' },
+                            mode: 'xy'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    async function init() {
+        availableFiles = await loadFileList();
+        populateDropdowns();
+        document.getElementById('gpu').addEventListener('change', updateChart);
+        document.getElementById('compliance').addEventListener('change', updateChart);
+        document.getElementById('system').addEventListener('change', updateChart);
+        document.getElementById('timestep').addEventListener('change', updateChart);
+        updateChart();
+    }
+
+    init();
+    </script>
+</body>
+</html>
