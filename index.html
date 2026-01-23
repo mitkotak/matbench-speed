@@ -8,15 +8,15 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
-        h1 { font-size: 1.4em; margin-bottom: 16px; }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; background: #1a1a2e; color: #eee; }
+        h1 { font-size: 1.4em; margin-bottom: 16px; color: #fff; }
         .controls { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
         .control { display: flex; flex-direction: column; gap: 4px; }
-        .control label { font-size: 12px; color: #666; }
-        .control select { padding: 6px 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
-        button { padding: 6px 12px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; background: #f5f5f5; cursor: pointer; }
-        button:hover { background: #e5e5e5; }
-        .chart-container { position: relative; height: 500px; }
+        .control label { font-size: 12px; color: #aaa; }
+        .control select { padding: 6px 10px; font-size: 14px; border: 1px solid #444; border-radius: 4px; background: #2d2d44; color: #eee; }
+        button { padding: 6px 12px; font-size: 13px; border: 1px solid #444; border-radius: 4px; background: #2d2d44; color: #eee; cursor: pointer; }
+        button:hover { background: #3d3d54; }
+        .chart-container { position: relative; height: 500px; background: #16213e; border-radius: 8px; padding: 10px; }
         canvas { max-width: 100%; }
     </style>
 </head>
@@ -52,7 +52,7 @@
     <div class="chart-container">
         <canvas id="chart"></canvas>
     </div>
-    <p style="font-size:11px;color:#666;margin-top:8px;">Scroll to zoom, drag to pan, or drag-select an area to zoom in</p>
+    <p style="font-size:11px;color:#888;margin-top:8px;">Scroll to zoom, drag to pan, or drag-select an area to zoom in</p>
 
     <script>
     // File naming: timing_data_{GPU}_{element}_{lattice}.csv
@@ -79,19 +79,19 @@
     ];
 
     const MODEL_COLORS = {
-        'Nequix-MP-1.5': '#0000ff',
-        'Nequix-MP-1': '#a52a2a',
-        'eSEN-30M-MP': '#ffa500',
-        'MACE-MP-0': '#ff00ff',
-        'MACE-MP-0-kernel': '#ff00ff',
-        'NequIP-MP-L': '#008000',
-        'SevenNet-l3i5': '#ff0000',
-        'GRACE-2L-MPtrj': '#808080',
-        'PET-MAD-S': '#ff7f50',
-        'PET-OAM-XL': '#4682b4',
-        'NequIP-MP-XL': '#ffc0cb',
-        'eSEN-6M-OC25': '#800080',
-        'Orb-v3-cons-inf-omat': '#ffd700'
+        'Nequix-MP-1.5': '#5c9eff',
+        'Nequix-MP-1': '#ff6b6b',
+        'eSEN-30M-MP': '#ffb347',
+        'MACE-MP-0': '#ff66ff',
+        'MACE-MP-0-kernel': '#ff66ff',
+        'NequIP-MP-L': '#66ff66',
+        'SevenNet-l3i5': '#ff4444',
+        'GRACE-2L-MPtrj': '#aaaaaa',
+        'PET-MAD-S': '#ff9966',
+        'PET-OAM-XL': '#66b3ff',
+        'NequIP-MP-XL': '#ffaacc',
+        'eSEN-6M-OC25': '#cc66ff',
+        'Orb-v3-cons-inf-omat': '#ffdd55'
     };
 
     let chart = null;
@@ -244,7 +244,7 @@
                 backgroundColor: MODEL_COLORS[model] || '#999',
                 pointStyle: 'rect',
                 pointRadius: 4,
-                pointBorderColor: '#000',
+                pointBorderColor: '#fff',
                 pointBorderWidth: 1,
                 tension: 0
             });
@@ -261,37 +261,38 @@
                 scales: {
                     x: {
                         type: 'logarithmic',
-                        title: { display: true, text: 'Number of atoms', font: { weight: 'bold', size: 13 }, color: '#000' },
+                        title: { display: true, text: 'Number of atoms', font: { weight: 'bold', size: 13 }, color: '#eee' },
                         ticks: {
                             callback: (v) => formatNumberTick(v),
                             maxRotation: 0,
-                            color: '#000',
+                            color: '#ccc',
                             font: { weight: 'bold' },
                             autoSkip: false,
                             maxTicksLimit: 20
                         },
-                        grid: { color: 'rgba(0,0,0,0.1)' }
+                        grid: { color: 'rgba(255,255,255,0.1)' }
                     },
                     y: {
                         type: 'logarithmic',
-                        title: { display: true, text: 'ns/day', font: { weight: 'bold', size: 13 }, color: '#000' },
+                        title: { display: true, text: 'ns/day', font: { weight: 'bold', size: 13 }, color: '#eee' },
                         ticks: {
                             callback: (v) => formatNumberTick(v),
-                            color: '#000',
+                            color: '#ccc',
                             font: { weight: 'bold' },
                             autoSkip: false,
                             maxTicksLimit: 20
                         },
-                        grid: { color: 'rgba(0,0,0,0.1)' }
+                        grid: { color: 'rgba(255,255,255,0.1)' }
                     }
                 },
                 plugins: {
                     title: {
                         display: true,
                         text: `Matbench ${compliance}, ${element} (a=${lattice}) - ${gpu}`,
-                        font: { size: 14 }
+                        font: { size: 14 },
+                        color: '#fff'
                     },
-                    legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 12 } },
+                    legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 12, color: '#ccc' } },
                     zoom: {
                         pan: { enabled: true, mode: 'xy' },
                         zoom: {
