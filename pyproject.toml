@@ -17,3 +17,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["matbench_speed"]
+
+[project.scripts]
+update-files = "matbench_speed.update_files:main"
