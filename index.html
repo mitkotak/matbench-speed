@@ -42,6 +42,12 @@
         .hint { transition: color 0.3s; }
         body.dark .hint { color: #888; }
         body.light .hint { color: #666; }
+        .disclaimer { transition: color 0.3s; }
+        body.dark .disclaimer { color: #888; }
+        body.light .disclaimer { color: #666; }
+        .disclaimer a { transition: color 0.3s; }
+        body.dark .disclaimer a { color: #6af; }
+        body.light .disclaimer a { color: #06c; }
     </style>
 </head>
 <body class="dark">
@@ -88,6 +94,7 @@
         <canvas id="chart"></canvas>
     </div>
     <p class="hint" style="font-size:11px;margin-top:8px;">Scroll to zoom, drag to pan, or drag-select an area to zoom in</p>
+    <p class="disclaimer" style="font-size:11px;margin-top:24px;">This leaderboard is only meant to track the relative scaling of different MLIPs and does not do real MD runs during benchmarking. For more details refer to <a href="https://github.com/mitkotak/matbench-speed">github.com/mitkotak/matbench-speed</a></p>
 
     <script>
     // File naming: timing_data_{GPU}_{element}_{lattice}.csv
@@ -343,6 +350,28 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'xy',
+                    intersect: false
+                },
+                onHover: (event, elements, chart) => {
+                    if (elements.length > 0) {
+                        const hoveredIndex = elements[0].datasetIndex;
+                        chart.data.datasets.forEach((dataset, i) => {
+                            dataset.borderWidth = i === hoveredIndex ? 3 : 1;
+                            dataset.borderColor = i === hoveredIndex
+                                ? MODEL_COLORS[dataset.label] || '#999'
+                                : (MODEL_COLORS[dataset.label] || '#999') + '40';
+                        });
+                    } else {
+                        chart.data.datasets.forEach((dataset) => {
+                            dataset.borderWidth = 1;
+                            dataset.borderColor = MODEL_COLORS[dataset.label] || '#999';
+                        });
+                    }
+                    chart.update('none');
+                },
                 scales: {
                     x: {
                         type: 'logarithmic',
@@ -405,7 +434,28 @@
                         font: { size: 14 },
                         color: themeColors.title
                     },
-                    legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 12, color: themeColors.legend } },
+                    legend: {
+                        position: 'right',
+                        labels: { font: { size: 11 }, boxWidth: 12, color: themeColors.legend },
+                        onHover: (e, legendItem, legend) => {
+                            const ci = legend.chart;
+                            ci.data.datasets.forEach((dataset, i) => {
+                                dataset.borderWidth = i === legendItem.datasetIndex ? 3 : 1;
+                                dataset.borderColor = i === legendItem.datasetIndex
+                                    ? MODEL_COLORS[dataset.label] || '#999'
+                                    : (MODEL_COLORS[dataset.label] || '#999') + '40';
+                            });
+                            ci.update('none');
+                        },
+                        onLeave: (e, legendItem, legend) => {
+                            const ci = legend.chart;
+                            ci.data.datasets.forEach((dataset) => {
+                                dataset.borderWidth = 1;
+                                dataset.borderColor = MODEL_COLORS[dataset.label] || '#999';
+                            });
+                            ci.update('none');
+                        }
+                    },
                     zoom: {
                         pan: { enabled: true, mode: 'xy' },
                         zoom: {

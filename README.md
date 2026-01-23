@@ -2,7 +2,7 @@
 
 **[View Interactive Benchmarks](https://mitkotak.github.io/matbench-speed/)**
 
-Benchmarking MLIPs using their ASECalculator
+Benchmarking MLIPs using their ASECalculator (including neighborlist overhead). All benchmark settings can be found under `scripts`
 
 - SevenNet, GRACE, Nequix scripts out of the box.
 - For MACE without kernels you might need to do [this hack](https://github.com/ACEsuit/mace/issues/1208#issuecomment-3348723384) in your local installation (typically in your conda/venv path)
