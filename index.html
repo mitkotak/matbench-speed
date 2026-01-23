@@ -63,12 +63,15 @@
             <select id="system"></select>
         </div>
         <div class="control">
-            <label>Time step</label>
-            <select id="timestep">
-                <option value="0.5">0.5 fs</option>
-                <option value="1" selected>1 fs</option>
-                <option value="2">2 fs</option>
-                <option value="4">4 fs</option>
+            <label>Y-axis</label>
+            <select id="yaxis">
+                <option value="ms_step">Speed - ms/step</option>
+                <option value="steps_sec">Throughput - steps/s</option>
+                <option value="steps_million">Throughput - million steps/day</option>
+                <option value="ns_0.5">Throughput - ns/day, 0.5 fs timestep</option>
+                <option value="ns_1" selected>Throughput - ns/day, 1 fs timestep</option>
+                <option value="ns_2">Throughput - ns/day, 2 fs timestep</option>
+                <option value="ns_4">Throughput - ns/day, 4 fs timestep</option>
             </select>
         </div>
         <button onclick="resetZoom()">Reset Zoom</button>
@@ -239,10 +242,29 @@
         return '';
     }
 
-    function getNsPerDay(time_ms, timestep_fs) {
-        // steps_per_day = 86400000 / time_ms
-        // ns_per_day = steps_per_day * timestep_fs * 1e-6 (fs to ns)
-        return (86400000 / time_ms) * timestep_fs * 1e-6;
+    function getYValue(time_ms, yAxisType) {
+        const stepsPerDay = 86400000 / time_ms;
+        const stepsPerSec = 1000 / time_ms;
+
+        if (yAxisType === 'steps_million') {
+            return stepsPerDay / 1e6;
+        } else if (yAxisType.startsWith('ns_')) {
+            const timestep = parseFloat(yAxisType.split('_')[1]);
+            return stepsPerDay * timestep * 1e-6;
+        } else if (yAxisType === 'steps_sec') {
+            return stepsPerSec;
+        } else if (yAxisType === 'ms_step') {
+            return time_ms;
+        }
+        return stepsPerDay / 1e6;
+    }
+
+    function getYAxisLabel(yAxisType) {
+        if (yAxisType === 'steps_million') return 'Million steps/day';
+        if (yAxisType.startsWith('ns_')) return 'ns/day';
+        if (yAxisType === 'steps_sec') return 'steps/s';
+        if (yAxisType === 'ms_step') return 'ms/step';
+        return 'Million steps/day';
     }
 
     function resetZoom() {
@@ -275,7 +297,7 @@
         const gpu = document.getElementById('gpu').value;
         const compliance = document.getElementById('compliance').value;
         const system = document.getElementById('system').value;
-        const timestep = parseFloat(document.getElementById('timestep').value);
+        const yAxisType = document.getElementById('yaxis').value;
         const [element, lattice] = system.split('_');
 
         const file = availableFiles.find(f => f.gpu === gpu && f.element === element && f.lattice === lattice);
@@ -301,7 +323,7 @@
             const colors = getThemeColors();
             datasets.push({
                 label: model,
-                data: modelData.map(d => ({ x: d.num_atoms, y: getNsPerDay(d.time, timestep) })),
+                data: modelData.map(d => ({ x: d.num_atoms, y: getYValue(d.time, yAxisType) })),
                 borderColor: MODEL_COLORS[model] || '#999',
                 backgroundColor: MODEL_COLORS[model] || '#999',
                 pointStyle: 'rect',
@@ -343,7 +365,7 @@
                     },
                     y: {
                         type: 'logarithmic',
-                        title: { display: true, text: 'ns/day', font: { weight: 'bold', size: 13 }, color: themeColors.text },
+                        title: { display: true, text: getYAxisLabel(yAxisType), font: { weight: 'bold', size: 13 }, color: themeColors.text },
                         afterBuildTicks: (axis) => {
                             // Ensure ticks at all powers of 10
                             const ticks = axis.ticks;
@@ -404,7 +426,7 @@
         document.getElementById('gpu').addEventListener('change', updateChart);
         document.getElementById('compliance').addEventListener('change', updateChart);
         document.getElementById('system').addEventListener('change', updateChart);
-        document.getElementById('timestep').addEventListener('change', updateChart);
+        document.getElementById('yaxis').addEventListener('change', updateChart);
         updateChart();
     }
 
