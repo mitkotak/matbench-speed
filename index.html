@@ -165,10 +165,13 @@
         const gpus = [...new Set(availableFiles.map(f => f.gpu))].sort();
         const systems = [...new Set(availableFiles.map(f => `${f.element}_${f.lattice}`))].sort();
 
-        gpuSelect.innerHTML = gpus.map(g => `<option value="${g}">${g}</option>`).join('');
+        gpuSelect.innerHTML = gpus.map(g =>
+            `<option value="${g}"${g === 'H100' ? ' selected' : ''}>${g}</option>`
+        ).join('');
         systemSelect.innerHTML = systems.map(s => {
             const [el, lat] = s.split('_');
-            return `<option value="${s}">${el} (a=${lat})</option>`;
+            const selected = el === 'Si' ? ' selected' : '';
+            return `<option value="${s}"${selected}>${el} (a=${lat})</option>`;
         }).join('');
     }
 
