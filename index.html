@@ -121,8 +121,7 @@
     ];
 
     const MODEL_COLORS = {
-        'Nequix-MP-1.5': '#22bbff',
-        'Nequix-MP-1': '#3366ff',
+        'Nequix-MP-1': '#22bbff',
         'eSEN-30M-MP': '#ff9933',
         'MACE-MP-0': '#dd44dd',
         'MACE-MP-0-kernel': '#dd44dd',
@@ -362,12 +361,8 @@
                         chart.data.datasets.forEach((dataset, i) => {
                             dataset.borderWidth = i === hoveredIndex ? 4 : 2;
                         });
-                    } else {
-                        chart.data.datasets.forEach((dataset) => {
-                            dataset.borderWidth = 2;
-                        });
+                        chart.update('none');
                     }
-                    chart.update('none');
                 },
                 scales: {
                     x: {
@@ -463,6 +458,15 @@
         });
     }
 
+    function resetHighlight() {
+        if (chart) {
+            chart.data.datasets.forEach((dataset) => {
+                dataset.borderWidth = 2;
+            });
+            chart.update('none');
+        }
+    }
+
     async function init() {
         availableFiles = await loadFileList();
         populateDropdowns();
@@ -470,6 +474,7 @@
         document.getElementById('compliance').addEventListener('change', updateChart);
         document.getElementById('system').addEventListener('change', updateChart);
         document.getElementById('yaxis').addEventListener('change', updateChart);
+        document.querySelector('.chart-container').addEventListener('mouseleave', resetHighlight);
         updateChart();
     }
 
