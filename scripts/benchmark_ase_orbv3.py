@@ -3,6 +3,7 @@
 # dependencies = [
 #     "pip-system-certs",
 #     "ase",
+#     "cuml-cu12",
 #     "orb-models",
 #     "torch==2.9.1",
 #     "matbench_speed",
@@ -25,4 +26,4 @@ calculators = {
         ),
         device="cuda")
 }
-benchmark(calculators, atom_name="Si", lattice_constant=5.43)
+benchmark(calculators, atom_name="C", lattice_constant=3.567)
