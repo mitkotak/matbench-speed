@@ -9,17 +9,17 @@ import os
 import sys
 import numpy as np
 
-def write_to_csv(model_name, atoms, time_ms, time_std, precision, gpu_name, csv_filename="./data/timing_data.csv"):
+def write_to_csv(model_name, num_atoms, atom_name, lattice_constant, time_ms, time_std, precision, gpu_name, csv_filename="./data/timing_data.csv"):
     """Append timing data to CSV file"""
     file_exists = os.path.isfile(csv_filename)
 
     with open(csv_filename, "a", newline="") as f:
         writer = csv.writer(f)
         if not file_exists:
-            writer.writerow(["model", "atoms", "time", "std", "precision", "gpu"])
-        writer.writerow([model_name, atoms, time_ms, time_std, precision, gpu_name])
+            writer.writerow(["model", "num_atoms", "atom_name", "lattice_constant", "time", "std", "precision", "gpu"])
+        writer.writerow([model_name, num_atoms, atom_name, lattice_constant, time_ms, time_std, precision, gpu_name])
 
-def benchmark_size(size, calc):
+def benchmark_size(calc, size, atom_name, lattice_constant):
 
     atoms = ase.Atoms(
         "OHH"*8,
@@ -55,7 +55,8 @@ def benchmark_size(size, calc):
     atoms = atoms.repeat((size, size, size))
     atoms.calc = calc
 
-    print("Number of atoms: ", len(atoms))
+    num_atoms = len(atoms)
+    print(f"Number of {atom_name} atoms: {num_atoms}")
 
     # warmup
     i_warmup = 0
@@ -101,7 +102,7 @@ def benchmark_size(size, calc):
 
 
     print("Testing new MD workflow, completed ", i_timing, " timing runs in ", t_timing, " seconds")
-    return np.median(times), np.std(times), len(atoms)
+    return np.median(times), np.std(times), num_atoms
 
 def get_gpu_name():
     if 'torch' in sys.modules:
@@ -113,17 +114,17 @@ def get_gpu_name():
     else:
         raise ValueError("No GPU found")
 
-def benchmark(calculators, precision="float32"):
+def benchmark(calculators, atom_name="H2O", lattice_constant=None, precision="float32"):
 
     gpu_name = get_gpu_name()
 
     for model, calculator in calculators.items():
         for i, size in enumerate([1,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]):
         # for i, size in enumerate([1,6,]):
-            time_s, time_std, num_atoms = benchmark_size(size, calculator)
+            time_s, time_std, num_atoms = benchmark_size(calculator, size, atom_name, lattice_constant)
             time_ms, time_std_ms = time_s * 1000, time_std * 1000
             if i == 0:
                 # extra warmup to be safe
                 continue
-            print(model, ": ", "atoms: ", num_atoms, "time: ", time_ms, " +/- ", time_std_ms, " ms")
-            write_to_csv(model, num_atoms, time_ms, time_std_ms, precision, gpu_name)
+            print(model, ": ", atom_name, " lattice_constant: ", lattice_constant, "atoms: ", num_atoms, "time: ", time_ms, " +/- ", time_std_ms, " ms")
+            write_to_csv(model, num_atoms, atom_name, lattice_constant, time_ms, time_std_ms, precision, gpu_name)
