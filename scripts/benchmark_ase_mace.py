@@ -14,8 +14,9 @@
 # matbench_speed = { path = "../." }
 # ///
 
-from matbench_speed.benchmark import benchmark
-from mace.calculators.foundations_models import mace_mp
+#from matbench_speed.benchmark import benchmark
+from matbench_speed.benchmark_md_ase import benchmark
+#from mace.calculators.foundations_models import mace_mp
 
 calculators = {
     #"MACE-MP-0-no-kernels": mace_mp(
