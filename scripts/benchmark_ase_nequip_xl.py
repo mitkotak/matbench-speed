@@ -28,4 +28,4 @@ calculators = {
        device="cuda",
     )
 }
-benchmark(calculators, atom_name="Si", lattice_constant=5.43)
+benchmark(calculators, atom_name="H20")

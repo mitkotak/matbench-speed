@@ -11,7 +11,7 @@ from matplotlib.ticker import FixedLocator, FixedFormatter
 import matplotlib
 
 
-markersize = 3
+markersize = 2.5
 matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['font.sans-serif'] = ['Arial', 'Helvetica', 'DejaVu Sans']
 matplotlib.rcParams['font.size'] = 9
@@ -28,11 +28,8 @@ matplotlib.rcParams['legend.edgecolor'] = 'black'
 matplotlib.rcParams['legend.fancybox'] = False
 matplotlib.rcParams['legend.fontsize'] = 8
 
-
-our_model = "Nequix-MP-1.5"
-atom_name = "Si"
-lattice_constant = 5.43
-compliant_status = "compliant"
+compliant_status = "non-compliant"
+atom_name = "H20"
 
 def _series(df: pd.DataFrame, model_name: str) -> tuple[list[int], list[float]]:
     sub = df[df["model"] == model_name].copy()
@@ -44,7 +41,6 @@ def _series(df: pd.DataFrame, model_name: str) -> tuple[list[int], list[float]]:
 def make_inference_fig(path: str) -> None:
     
     atom_name = path.split("_")[3]
-    lattice_constant = path.split("_")[4][:-4]
 
     df = pd.read_csv(path)
     gpu_name = df["gpu"].unique()[0]
@@ -67,8 +63,7 @@ def make_inference_fig(path: str) -> None:
 
     fig, ax = plt.subplots(figsize=(4.0, 3.0))
 
-    ax.plot(ours_x, ours_y_millions, marker="s", markersize=markersize, linestyle="-", color="blue", label=our_model, markeredgecolor='black')
-    ax.plot(nequix_x, nequix_y_millions, marker="s", markersize=markersize, linestyle="-", color="brown", label="Nequix-MP-1", markeredgecolor='black')
+    ax.plot(nequix_x, nequix_y_millions, marker="s", markersize=markersize, linestyle="-", color="blue", label="Nequix-MP-1", markeredgecolor='black')
     ax.plot(esen_x, esen_y_millions, marker="s", markersize=markersize, linestyle="-", color="orange", label="eSEN-30M-MP", markeredgecolor='black')
     ax.plot(mace_x, mace_y_millions, marker="s", markersize=markersize, linestyle="-", color="fuchsia", label="MACE-MP-0", markeredgecolor='black')
     ax.plot(nequip_x, nequip_y_millions, marker="s", markersize=markersize, linestyle="-", color="green", label="NequIP-MP-L", markeredgecolor='black')
@@ -103,18 +98,18 @@ def make_inference_fig(path: str) -> None:
     legend = ax.legend(fontsize=5, loc='best')
     legend.get_frame().set_linewidth(0.5)
     
-    ax.set_title(f"Matbench {compliant_status}, {atom_name} diamond lattice_constant={lattice_constant} Å \n {gpu_name} {precision}", fontsize=8, weight='normal')
+    ax.set_title(f"Matbench {compliant_status}, {atom_name} H20 Å \n {gpu_name} {precision}", fontsize=8, weight='normal')
 
     fig.tight_layout()
-    fig.savefig(f"./figures/inference_fig_{compliant_status}_{atom_name}_{lattice_constant}_{gpu_name}_{precision}.pdf", dpi=300, bbox_inches="tight")
-    fig.savefig(f"./figures/inference_fig_{compliant_status}_{atom_name}_{lattice_constant}_{gpu_name}_{precision}.png", dpi=300, bbox_inches="tight")
+    fig.savefig(f"./figures/inference_fig_{compliant_status}_{atom_name}_{gpu_name}_{precision}.pdf", dpi=300, bbox_inches="tight")
+    fig.savefig(f"./figures/inference_fig_{compliant_status}_{atom_name}_{gpu_name}_{precision}.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 def main():
  
-    make_inference_fig(f"./data/timing_data_A100_{atom_name}_{lattice_constant}.csv")
-    make_inference_fig(f"./data/timing_data_H100_{atom_name}_{lattice_constant}.csv")
-    # make_inference_fig(f"./data/timing_data_T4_{atom_name}_{lattice_constant}.csv")
+    #make_inference_fig(f"./data/timing_data_A100_{atom_name}.csv")
+    make_inference_fig(f"./data/timing_data_H100_{atom_name}.csv")
+    # make_inference_fig(f"./data/timing_data_T4_{atom_name}.csv")
 
 if __name__ == "__main__":
     main()

@@ -4,6 +4,7 @@
 #     "fairchem-core==1.10",
 #     "torch-scatter",
 #     "torch-sparse",
+#     "scipy<=1.15",
 #     "matbench_speed",
 # ]
 #
@@ -22,4 +23,4 @@ calculators = {
         model_name="eSEN-30M-MP",
     ),
 }
-benchmark(calculators, atom_name="Si", lattice_constant=5.43)
+benchmark(calculators, atom_name="H20")

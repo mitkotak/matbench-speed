@@ -26,4 +26,4 @@ calculators = {
         ),
         device="cuda")
 }
-benchmark(calculators, atom_name="C", lattice_constant=3.567)
+benchmark(calculators, atom_name="H20")
