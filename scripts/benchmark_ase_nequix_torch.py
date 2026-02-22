@@ -4,10 +4,12 @@
 #    "pip-system-certs",
 #     "ase",
 #     "nequix[torch]",
+#     "torch==2.7.0+cu128",
 #     "matbench_speed",
 # ]
 #
 # [tool.uv.sources]
+# torch = { url = "https://download.pytorch.org/whl/cu128/torch-2.7.0%2Bcu128-cp312-cp312-manylinux_2_28_x86_64.whl" }
 # matbench_speed = { path = "../." }
 # ///
 
