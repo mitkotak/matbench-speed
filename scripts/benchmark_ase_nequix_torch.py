@@ -15,7 +15,7 @@ from matbench_speed.benchmark import benchmark
 from nequix.calculator import NequixCalculator
 
 calculators = {
-    "Nequix-MP-1.5": NequixCalculator(
+    "Nequix-MP-1": NequixCalculator(
         model_name="nequix-mp-1",
         backend="torch",
     ),
